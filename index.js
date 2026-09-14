@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
 
+// Responses here are dynamic, non-cacheable JSON, so ETag computation
+// (hashing the response body on every request) is pure overhead.
+app.set("etag", false);
+
 app.use(express.json());
 
 // Health check
