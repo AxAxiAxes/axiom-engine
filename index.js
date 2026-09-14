@@ -1,7 +1,10 @@
 const express = require("express");
 const app = express();
 
-app.use(express.json());
+// Bound the request body size: without a limit, express.json() will buffer
+// and parse arbitrarily large payloads, which can spike memory/CPU and
+// block the event loop on a single oversized or malicious request.
+app.use(express.json({ limit: "100kb" }));
 
 // Health check
 app.get("/", (req, res) => {
