@@ -20,6 +20,11 @@ app.post("/axiom", (req, res) => {
   });
 });
 
-app.listen(process.env.PORT || 3000, () => {
+// Node's default TCP backlog (511) is the max number of pending connections
+// the OS will queue while the event loop is busy accepting them. Under bursty
+// traffic that queue can fill up, causing new connections to be refused or
+// reset instead of just waiting briefly. Raising it gives the server more
+// headroom to absorb spikes without dropping clients.
+app.listen({ port: process.env.PORT || 3000, backlog: 1024 }, () => {
   console.log("AXIOM engine running");
 });
