@@ -1,5 +1,11 @@
 const express = require("express");
+const compression = require("compression");
 const app = express();
+
+// Gzip/deflate-compress responses so JSON payloads use fewer bytes on the
+// wire. Cheap CPU cost per request, meaningful bandwidth/latency win,
+// especially as response payloads grow.
+app.use(compression());
 
 app.use(express.json());
 
