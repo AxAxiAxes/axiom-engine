@@ -1,5 +1,12 @@
 const express = require("express");
+const compression = require("compression");
 const app = express();
+
+// Gzip/deflate-compress response bodies before they hit the wire. This
+// cuts payload size (and therefore latency) for clients, especially as
+// responses grow, for a single line of middleware and no application
+// changes elsewhere.
+app.use(compression());
 
 app.use(express.json());
 
