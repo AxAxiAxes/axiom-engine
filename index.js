@@ -1,6 +1,12 @@
 const express = require("express");
 const app = express();
 
+// Express only defaults to compact (non-indented) JSON when NODE_ENV is
+// "production". Setting this explicitly guarantees every response skips
+// the extra indentation work and bytes regardless of how the process is
+// launched/deployed.
+app.set("json spaces", 0);
+
 app.use(express.json());
 
 // Health check
