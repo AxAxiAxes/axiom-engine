@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-app.use(express.json());
+const jsonParser = express.json();
 
 // Health check
 app.get("/", (req, res) => {
@@ -9,7 +9,7 @@ app.get("/", (req, res) => {
 });
 
 // Core automation route
-app.post("/axiom", (req, res) => {
+app.post("/axiom", jsonParser, (req, res) => {
   const { action, payload } = req.body;
 
   res.json({
