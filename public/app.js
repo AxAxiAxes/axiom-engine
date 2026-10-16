@@ -225,6 +225,7 @@ async function refresh(full = false) {
       renderHistory();
       const identity = await api("/identity");
       $("identity-note").textContent = `Origin: ${identity.originReference}. ${identity.ownership.claimant}: founder ownership asserted and recorded as established in the internal record; requested share ${identity.ownership.requestedSharePercent}%. App registration and passport issuance remain unverified.`;
+      $("ownership-policy").textContent = identity.ownershipPolicy.retention;
       const candidate = $("passport-candidate").value;
       $("passport-candidate").replaceChildren(option("", "Unassigned"));
       for (const token of identity.reservedNames) $("passport-candidate").append(option(token, `${token} / reserved, unissued`));

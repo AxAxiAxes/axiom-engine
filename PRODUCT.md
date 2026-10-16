@@ -28,6 +28,8 @@ This repository began as an Express health/echo stub. No incumbent UI, asset lib
 
 The coordinating chat reviewed and relayed `origin-registration-20260929-v1/ORIGIN_REGISTRATION.md` and `ORIGIN_RIGHTS_REGISTER.md`: Axel Urartu's founder/full-ownership claim is recorded as established in the internal record, requested share 100%, with "Founder ownership stands here." The rights register is private/unsigned, not an assignment or legal opinion. Preserve that assertion without claiming the app adjudicates/transfers title; signatures/filings, third-party/dependency/model rights, app registration, and passport issuance are separate and unverified here.
 
+Axel's governing forward policy is 100% Origin ownership/control of future original project contributions, with no voluntary assignment/license/transfer to agents or others unless he chooses. Maintain contributor/source provenance. This intended policy does not itself override the existing ISC declaration, third-party licenses, provider/platform terms, or bind contributors without applicable agreements. Changing licenses or visibility requires separate approval; do not certify every generated line as exclusively owned. `docs/ownership-policy.md` records the declaration, evidence, and open obligations.
+
 ## Principles
 
 Keep local readiness and failure states honest. Distinguish templates, enablement, and runtime activity. Preserve user control of local data and uploaded media. Never infer ownership or consent from an upload.

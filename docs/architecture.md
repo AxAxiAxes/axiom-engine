@@ -66,6 +66,8 @@ No issuance ledger or authoritative app-registration proof exists here. Current 
 
 This app preserves that assertion without adjudicating or transferring title. Signatures/filings and third-party/dependency/model rights remain distinct and unverified here. Uploading files does not independently establish rights, consent, app registration, or passport issuance. See README Rights & limits and the in-app help dialog.
 
+`GET /api/identity` also exposes the founder's forward retention policy: Axel directs 100% ownership/control of future original Origin/AXES contributions and decides any voluntary assignment/license/transfer. The policy is an intended governance instruction, not a new license, a signed contributor agreement, or a guarantee of exclusive AI-output title. The [ownership/provenance record](ownership-policy.md) distinguishes original contributions from licensed components, the baseline ISC declaration and public-repository/platform grants, and the applicable account/provider terms. No licenses or visibility settings are altered. Future grants/changes require Axel's separate decision.
+
 ## Rights & limits and threat model
 
 This is a trusted-user, local workstation tool, not a public web service or secure execution sandbox. Pairing protects private app reads/writes from ordinary unpaired browser requests; exact Host/Origin, anti-CSRF, disabled CORS, CSP, safe text rendering, and no-store responses form additional boundaries. Sessions are in memory and invalidate on process restart. Startup pairing display is intentional; prompt/output/session secrets are not logged by the app. Runtime output is inspected in a bounded in-memory buffer for readiness and is not forwarded into normal logs.
