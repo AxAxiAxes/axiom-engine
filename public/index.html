@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AXES | Local workspace</title>
+  <link rel="stylesheet" href="/app/app.css">
+  <script src="/app/app.js" defer></script>
+</head>
+<body>
+<!-- THESIS: A local role workbench, not a fleet activity dashboard.
+OWN-WORLD: Cool daylight surfaces, Windows system type, blue task controls; gold origin rings belong only to profile identity.
+STORY: Pair locally, choose an editable role, verify a local model, then converse.
+FIRST VIEWPORT: Role rail left, conversation center, compact setup right; the composer is the primary action.
+FORM: User-pinned Windows workbench with sacred route/light-of-origin avatar details; no random concept script used. -->
+  <a class="skip-link" href="#workspace">Skip to workspace</a>
+  <header class="app-header">
+    <a class="brand" href="/app/" aria-label="AXES local workspace"><span class="brand-mark" aria-hidden="true">A</span>AXES <span class="brand-sub">Local workspace</span></a>
+    <nav aria-label="Workspace controls">
+      <span class="local-label">Local only / no cloud fallback</span>
+      <button id="help-button" class="quiet">Rights &amp; limits</button>
+      <button id="logout" class="quiet" hidden>Lock workspace</button>
+    </nav>
+  </header>
+  <div id="notice" role="status" aria-live="polite" hidden></div>
+  <section id="pairing" class="pairing" aria-labelledby="pair-title">
+    <div class="origin-symbol" aria-hidden="true"><span></span></div>
+    <h1 id="pair-title">Your workspace. On this device.</h1>
+    <p>Pair this browser using the private code printed in the AXES launch terminal. Your profiles, conversations, and uploaded avatars stay here.</p>
+    <form id="pair-form">
+      <label for="pair-code">Launch pairing code</label>
+      <input id="pair-code" type="password" autocomplete="off" spellcheck="false" required maxlength="128">
+      <button type="submit" class="primary">Open local workspace</button>
+    </form>
+    <p class="muted">Inference needs a preinstalled Ollama runtime and a local model. You can manage roles and history without them. This is not a bootable OS or an autonomous agent fleet.</p>
+  </section>
+  <main id="workspace" class="workbench" hidden tabindex="-1">
+    <aside class="role-rail" aria-labelledby="roles-title">
+      <section class="origin-record" aria-labelledby="origin-title">
+        <h2 id="origin-title">Origin</h2>
+        <code>KEYSTONE-ORIGIN-000001</code>
+        <p>Axel Urartu: founder ownership asserted and recorded as established in the internal record. Requested share: 100%.</p>
+      </section>
+      <div class="section-heading"><h2 id="roles-title">Role profiles</h2><button id="add-role" class="quiet">Add role</button></div>
+      <p id="counts" class="muted">Loading registry...</p>
+      <label for="role-search">Find a role</label>
+      <input id="role-search" type="search" placeholder="Search names and purpose">
+      <div id="role-list" class="role-list" aria-label="Role profiles"></div>
+      <p class="rail-note">Starter templates are editable instructions. Enabling a role does not launch an agent.</p>
+    </aside>
+    <section class="conversation-pane" aria-labelledby="conversation-title">
+      <header class="conversation-heading">
+        <div id="avatar" class="avatar" aria-hidden="true"><span>A</span></div>
+        <div class="conversation-heading-copy"><h1 id="conversation-title">Choose a role to begin</h1><p id="role-purpose" class="muted">A focused conversation, powered locally.</p></div>
+        <button id="edit-role" class="quiet" disabled>Edit role</button>
+      </header>
+      <div class="conversation-toolbar">
+        <label for="history">Saved conversation</label>
+        <select id="history"><option value="">New conversation</option></select>
+        <button id="new-conversation" class="quiet" disabled>New</button>
+        <button id="delete-conversation" class="quiet" disabled>Delete</button>
+      </div>
+      <section id="profile-editor" class="profile-editor" hidden aria-labelledby="editor-title">
+        <h2 id="editor-title">Edit role profile</h2>
+        <form id="profile-form">
+          <label for="profile-name">Name</label><input id="profile-name" required maxlength="80">
+          <label for="profile-purpose">Purpose</label><textarea id="profile-purpose" rows="2" required maxlength="500"></textarea>
+          <label for="profile-instructions">Role instructions</label><textarea id="profile-instructions" rows="7" required maxlength="4000"></textarea>
+          <label for="passport-candidate">Reserved identity candidate (not an issued passport)</label>
+          <select id="passport-candidate"><option value="">Unassigned</option></select>
+          <p id="passport-state" class="muted">Passport issuance remains unverified. No identity is assigned automatically.</p>
+          <label class="check"><input id="profile-enabled" type="checkbox" checked> Enabled for new conversations and runs</label>
+          <div class="actions"><button class="primary" type="submit">Save profile</button><button id="close-editor" type="button">Cancel editing</button></div>
+        </form>
+        <section id="media-editor" aria-labelledby="media-title">
+          <h3 id="media-title">Profile avatar</h3>
+          <p>Upload an image or short video. It represents this profile; it is not sent to the model. <button id="media-help" class="text-button">Rights &amp; limits</button></p>
+          <label for="media-file">JPEG/PNG (12 MiB, 2048 x 2048) or H.264 MP4 (25 MiB, 1920 x 1080, 15 seconds)</label>
+          <input id="media-file" type="file" accept="image/jpeg,image/png,video/mp4">
+          <label class="check"><input id="media-rights" type="checkbox"> I have the rights and permissions needed, including consent for identifiable people.</label>
+          <div class="actions"><button id="upload-media" type="button">Upload / replace avatar</button><button id="delete-media" type="button">Delete avatar</button></div>
+          <p id="media-state" class="muted"></p>
+        </section>
+      </section>
+      <div id="messages" class="messages" aria-label="Conversation messages" tabindex="0">
+        <div class="empty-state"><div class="origin-line" aria-hidden="true"></div><h2>Start with a role. Keep the work here.</h2><p>Select a profile from the registry, then choose an installed local model. No profile is working in the background.</p></div>
+      </div>
+      <div id="run-state" class="run-state" role="status" aria-live="polite">No active run.</div>
+      <form id="compose" class="composer">
+        <label for="message">Message</label>
+        <textarea id="message" rows="3" maxlength="8000" placeholder="What would you like to work on?" required></textarea>
+        <div class="composer-footer"><span id="send-reason" class="muted">Select a role and local model.</span><button id="cancel-run" type="button" hidden>Cancel generation</button><button id="send" class="primary" type="submit" disabled>Send locally</button></div>
+      </form>
+    </section>
+    <aside class="setup-pane" aria-labelledby="setup-title">
+      <div class="section-heading"><h2 id="setup-title">Local setup</h2><button id="refresh" class="quiet">Refresh</button></div>
+      <div class="readiness"><span id="runtime-indicator" class="indicator" aria-hidden="true"></span><strong id="runtime-title">Checking runtime</strong></div>
+      <p id="runtime-detail" class="muted"></p>
+      <label for="model">Installed local model</label>
+      <select id="model"><option value="">Choose a model</option></select>
+      <p class="muted">Only verifiable local models appear. AXES never downloads models or falls back to cloud.</p>
+      <h3>Data on this device</h3>
+      <p id="storage-status">Checking local storage.</p>
+      <code id="data-path" class="data-path"></code>
+      <p class="muted">Conversations and avatars are plaintext files under your user account. They are not encrypted by AXES.</p>
+      <h3>Before going offline</h3>
+      <p>Provision Node, dependencies, Ollama, and a suitable model. Video avatars also need FFmpeg/ffprobe. Image uploads do not.</p>
+      <p class="muted">Cloud disabled is not a machine-wide air gap. For strict offline use, disconnect the host.</p>
+      <h3>What this slice does</h3>
+      <p>Editable roles, saved conversations, local inference, and uploaded avatars.</p>
+      <p class="muted">No autonomous tools, media generation, cloud service, or bootable OS.</p>
+      <h3>Registration &amp; identity</h3>
+      <p id="identity-note">Checking supplied registry references.</p>
+    </aside>
+  </main>
+  <dialog id="help" aria-labelledby="help-title">
+    <div class="dialog-heading"><h2 id="help-title">Rights &amp; limits</h2><button id="close-help">Close</button></div>
+    <h3>Your media, your responsibility</h3>
+    <p>Upload only files you have permission to use. Check copyright, model/runtime licenses, privacy, likeness, and consent obligations. Uploading does not establish ownership or transfer anyone's rights. This is practical guidance, not legal advice.</p>
+    <p>Files stay on this device; AXES does not upload them to a service or send avatars to the language model. You control replacement and deletion. Deletion cannot erase backups or guarantee forensic erasure. Use your OS account and disk encryption for protection.</p>
+    <h3>Available options</h3>
+    <p>Use or edit 16 starter role templates, create profiles, enable/disable them, select an installed local model, create/delete conversations, and upload/replace/delete a role's avatar. Templates, enabled profiles, and active runs are different things.</p>
+    <p>JPEG/PNG images: 12 MiB, 2048 x 2048, single frame; normalized to PNG with metadata removed. H.264 MP4 videos: 25 MiB, 1920 x 1080, 15 seconds; require local FFmpeg/ffprobe, are re-encoded, and lose audio and metadata. Videos play only when you choose Play; no autoplay. No SVG, GIF, WebM, remote media, or generated images/videos.</p>
+    <h3>Compute and privacy boundaries</h3>
+    <p>One generation at a time; 120-second timeout; 64 KiB JSON requests; conservative 12,000-byte input and model context budgets; 1,024 output tokens. Long conversations may require a new conversation; AXES does not intentionally drop completed history to fit. Failed turns remain visible but are not replayed.</p>
+    <p>Node 24 LTS, app dependencies, Ollama, and a licensed model must be provisioned before disconnection. Hardware determines speed and supported model size. Cloud is disabled and unsupported here. No automatic downloads, tool execution, autonomous delegation, semantic memory, or OS image.</p>
+    <p>Pairing protects the local app from ordinary unpaired browser requests, not malware running as your user. The managed Ollama listener is a separate local process, not a secure sandbox. Runtime updaters and unrelated programs may still use the internet; strict air gaps require host-level controls.</p>
+    <h3>Registration is not issuance</h3>
+    <p>Origin first: the founder/full-ownership claim for Axel Urartu is recorded as established in the user's internal Origin record, with a requested share of 100% and the statement "Founder ownership stands here." The private, unsigned rights/evidence schedule is not an assignment or legal opinion. This app does not adjudicate or transfer title; signatures, filings, and third-party/dependency/model rights remain distinct and unverified here.</p>
+    <p>The supplied Origin reference is KEYSTONE-ORIGIN-000001; AXES does not mint a new Origin ID. XEXAR, XEXAUR, XEXPUR, XEXIAN, XEXAX, XEXXI, and XEXAULA are reserved name tokens only. They may be linked as unissued candidates, never auto-assigned. No verified issuance ledger or app-registration proof is present. XEXAUR-0001 is an illustration, not an issued passport. Verified registry import/assignment needs an authoritative source and is deferred.</p>
+  </dialog>
+</body>
+</html>
