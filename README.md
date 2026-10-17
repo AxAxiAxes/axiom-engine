@@ -81,6 +81,25 @@ The existing `package.json` declares **ISC** (also present in the baseline); no 
 
 The same guidance is available in the app's **Rights & limits** dialog.
 
+### Local command desk design and deployment status (2026-10-17)
+
+The supplied black/gold/burgundy dashboard now guides the local interface:
+Founder Desk contains Origin and the registry, Project Overview shows actual
+template/enabled-profile/active-run counts, and Manager Agent contains local
+readiness controls. Its name is a design heading, not a claim that a manager
+agent is connected. No example traffic, financial, stability, or site figures
+from the artwork are treated as telemetry. See the source-reference addendum
+in [DESIGN.md](DESIGN.md).
+
+Selecting a profile shows its exact saved local ID and unassigned or reserved,
+unissued identity candidate. Existing profile IDs, instructions, enablement,
+and provenance remain unchanged. The seed is 16 editable starter templates,
+not an installed manifest for the founder's target of 15 distinct agents plus
+Xiiom. Deploying that fleet still requires its authoritative configuration,
+an available local model/runtime, and bounded action permissions; these are
+not supplied by a visual redesign or the Desktop launcher. No passports are
+assigned and no autonomous execution is added by this update.
+
 ## Storage, backup, and configuration
 
 Default data directory: `%LOCALAPPDATA%\AXES\axiom-engine`; database: `axes.sqlite`; normalized avatars: `media\`. The app shows the actual database path after pairing. Data is outside the checkout and is not committed.

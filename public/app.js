@@ -43,6 +43,7 @@ function lock() {
   $("messages").replaceChildren();
   $("role-list").replaceChildren();
   $("avatar").replaceChildren();
+  $("profile-identity").textContent = "No profile selected. No agent identity is assigned automatically.";
   for (const id of ["profile-name", "profile-purpose", "profile-instructions", "message", "media-file", "pair-code"]) $(id).value = "";
   $("pair-code").focus();
 }
@@ -98,6 +99,9 @@ function renderProfile() {
   const p = state.profile;
   $("conversation-title").textContent = p ? p.name : "Choose a role to begin";
   $("role-purpose").textContent = p ? p.purpose : "A focused conversation, powered locally.";
+  $("profile-identity").textContent = p ?
+    `${p.template ? "Starter template" : "Custom profile"} / local ID: ${p.id} / ${p.passport_candidate ? `${p.passport_candidate}: reserved, unissued candidate` : "Passport unassigned"}. No verified deployed agent identity.` :
+    "No profile selected. No agent identity is assigned automatically.";
   $("edit-role").disabled = !p;
   $("new-conversation").disabled = !p?.enabled;
   $("avatar").replaceChildren();
@@ -214,6 +218,9 @@ async function refresh(full = false) {
     $("runtime-indicator").classList.toggle("ready", status.runtime.ready);
     $("runtime-detail").textContent = status.runtime.message;
     $("counts").textContent = `${status.counts.templates} templates / ${status.counts.enabledProfiles} enabled / ${status.counts.activeRuns} active runs`;
+    $("overview-templates").textContent = String(status.counts.templates);
+    $("overview-enabled").textContent = String(status.counts.enabledProfiles);
+    $("overview-runs").textContent = String(status.counts.activeRuns);
     $("data-path").textContent = status.database;
     $("storage-status").textContent = status.storage === "ready" ? "Local storage ready." : "Storage failure: stop the app and check permissions/free disk space.";
     $("media-state").textContent = status.media?.message || "Media setup is unavailable.";

@@ -8,14 +8,14 @@
   <script src="/app/app.js" defer></script>
 </head>
 <body>
-<!-- THESIS: A local role workbench, not a fleet activity dashboard.
-OWN-WORLD: Cool daylight surfaces, Windows system type, blue task controls; gold origin rings belong only to profile identity.
-STORY: Pair locally, choose an editable role, verify a local model, then converse.
-FIRST VIEWPORT: Role rail left, conversation center, compact setup right; the composer is the primary action.
-FORM: User-pinned Windows workbench with sacred route/light-of-origin avatar details; no random concept script used. -->
+<!-- THESIS: The supplied Founder Desk / Project Overview / Manager Agent dashboard, with real local state instead of the artwork's illustrative telemetry.
+OWN-WORLD: Blackened surfaces, antique gold framing and burgundy controls; readable Windows system type and restrained serif section headings.
+STORY: Pair, inspect actual deployment readiness, select a distinct saved profile, and converse only when a local model is ready.
+FIRST VIEWPORT: Founder and registry left, measured project overview and conversation center, manager readiness right.
+FORM: User-supplied dashboard reference 4c740fa515d3a51c7685020d1361388d89c17803e743b57d68e78609a707ef1b.png; no invented metrics or generated portraits. -->
   <a class="skip-link" href="#workspace">Skip to workspace</a>
   <header class="app-header">
-    <a class="brand" href="/app/" aria-label="AXES local workspace"><span class="brand-mark" aria-hidden="true">A</span>AXES <span class="brand-sub">Local workspace</span></a>
+    <a class="brand" href="/app/" aria-label="AXES local workspace"><span class="brand-mark" aria-hidden="true">A</span>AXES <span class="brand-sub">Local command desk</span></a>
     <nav aria-label="Workspace controls">
       <span class="local-label">Local only / no cloud fallback</span>
       <button id="help-button" class="quiet">Rights &amp; limits</button>
@@ -37,6 +37,7 @@ FORM: User-pinned Windows workbench with sacred route/light-of-origin avatar det
   <main id="workspace" class="workbench" hidden tabindex="-1">
     <aside class="role-rail" aria-labelledby="roles-title">
       <section class="origin-record" aria-labelledby="origin-title">
+        <h2 class="desk-heading">Founder Desk</h2>
         <h2 id="origin-title">Origin</h2>
         <code>KEYSTONE-ORIGIN-000001</code>
         <p>Axel Urartu: founder ownership asserted and recorded as established in the internal record. Requested share: 100%.</p>
@@ -49,11 +50,21 @@ FORM: User-pinned Windows workbench with sacred route/light-of-origin avatar det
       <p class="rail-note">Starter templates are editable instructions. Enabling a role does not launch an agent.</p>
     </aside>
     <section class="conversation-pane" aria-labelledby="conversation-title">
+      <section class="project-overview" aria-labelledby="overview-title">
+        <h2 id="overview-title" class="desk-heading">Project Overview</h2>
+        <dl class="overview-metrics">
+          <div><dt>Starter templates</dt><dd id="overview-templates">-</dd></div>
+          <div><dt>Enabled profiles</dt><dd id="overview-enabled">-</dd></div>
+          <div><dt>Active runs</dt><dd id="overview-runs">-</dd></div>
+        </dl>
+        <p class="deployment-note">Target: 15 distinct agents plus Xiiom. The saved profiles below are not a verified installation of that fleet.</p>
+      </section>
       <header class="conversation-heading">
         <div id="avatar" class="avatar" aria-hidden="true"><span>A</span></div>
         <div class="conversation-heading-copy"><h1 id="conversation-title">Choose a role to begin</h1><p id="role-purpose" class="muted">A focused conversation, powered locally.</p></div>
         <button id="edit-role" class="quiet" disabled>Edit role</button>
       </header>
+      <p id="profile-identity" class="profile-identity">No profile selected. No agent identity is assigned automatically.</p>
       <div class="conversation-toolbar">
         <label for="history">Saved conversation</label>
         <select id="history"><option value="">New conversation</option></select>
@@ -93,6 +104,8 @@ FORM: User-pinned Windows workbench with sacred route/light-of-origin avatar det
       </form>
     </section>
     <aside class="setup-pane" aria-labelledby="setup-title">
+      <h2 class="desk-heading">Manager Agent</h2>
+      <p class="manager-note">Control surface for local readiness, not a connected manager agent.</p>
       <div class="section-heading"><h2 id="setup-title">Local setup</h2><button id="refresh" class="quiet">Refresh</button></div>
       <div class="readiness"><span id="runtime-indicator" class="indicator" aria-hidden="true"></span><strong id="runtime-title">Checking runtime</strong></div>
       <p id="runtime-detail" class="muted"></p>

@@ -9,7 +9,12 @@ test("legacy health and authenticated echo contract remain, UI is at /app/", asy
   const health = await s.request("/");
   assert.equal(await health.text(), '{"status":"AXIOM engine online"}');
   const ui = await s.request("/app/");
-  assert.match(await ui.text(), /Rights &amp; limits/);
+  const html = await ui.text();
+  assert.match(html, /Rights &amp; limits/);
+  for (const heading of ["Founder Desk", "Project Overview", "Manager Agent"]) assert.ok(html.includes(heading));
+  for (const id of ["overview-templates", "overview-enabled", "overview-runs", "profile-identity"]) assert.ok(html.includes(`id="${id}"`));
+  assert.match(html, /not a verified installation of that fleet/);
+  assert.match(html, /not a connected manager agent/);
   assert.equal((await s.request("/axiom", { method: "POST", body: '{"action":"ping","payload":{}}' })).status, 401);
   await s.pair();
   const echo = await s.request("/axiom", { method: "POST", body: '{"action":"ping","payload":{"test":1}}' });
