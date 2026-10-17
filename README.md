@@ -148,6 +148,28 @@ No OriginAI-to-AXES adapter, new agent installation, hosted-service request,
 or production cutover was performed by this verification. The existing
 record-reader and the AXES local command desk remain separate surfaces.
 
+### Independent per-user command desk installation
+
+Unlike the worktree-dependent Desktop prototype, `scripts\install-local.ps1`
+copies the command desk, provisioned dependencies, tests, Node executable,
+and its license notice into a new directory. It makes no downloads or
+machine-wide changes and refuses to overwrite an existing installation.
+Use a Node distribution with its `LICENSE` beside `node.exe`:
+
+```powershell
+.\scripts\install-local.ps1 -NodePath 'C:\tools\node-v24.22.0-win-x64\node.exe' -InstallDirectory "$env:LOCALAPPDATA\AXES\command-desk-v1" -Port 3318
+```
+
+The example Node path must be replaced with the actual provisioned path.
+The installer runs the test suite from the copied application. Start it
+with the generated `Start-AXES.cmd`, then open
+`http://127.0.0.1:3318/app/` and use the pairing code printed only in its
+terminal. Data is kept separately at
+`%LOCALAPPDATA%\AXES\local-command-desk-data`; existing Desktop prototype
+data is not moved or imported. Stop with Ctrl+C in that launch terminal.
+This is a local command desk installation, not a connected-agent installation.
+Missing models/runtime are reported explicitly.
+
 ## Storage, backup, and configuration
 
 Default data directory: `%LOCALAPPDATA%\AXES\axiom-engine`; database: `axes.sqlite`; normalized avatars: `media\`. The app shows the actual database path after pairing. Data is outside the checkout and is not committed.
