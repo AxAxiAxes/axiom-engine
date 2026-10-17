@@ -100,6 +100,54 @@ an available local model/runtime, and bounded action permissions; these are
 not supplied by a visual redesign or the Desktop launcher. No passports are
 assigned and no autonomous execution is added by this update.
 
+### Origin-first local rollout
+
+Reference review: [Ollama's local server guidance](https://docs.ollama.com/faq)
+and [Open WebUI's persistent local UI/runtime pattern](https://docs.openwebui.com/getting-started/quick-start/)
+support keeping UI state separate from model execution. This repository
+reuses its existing paired Express/SQLite workspace and managed local adapter;
+it does not add Docker, Open WebUI, cloud fallback, or model downloads.
+
+Origin `KEYSTONE-ORIGIN-000001` is the established starting anchor, not a
+registration blocker. The founder-directed rollout starts with OriginAI,
+then the remaining distinct agents in their original registration order.
+The existing OriginAI package must be preserved, not replaced by a role
+template or an invented passport.
+
+On 2026-10-17 the existing `C:\Users\Axel\OriginAI` record-reader ran
+successfully: `verify` matched all 59 listed files against its retained
+unsigned manifest, `status` retained the established Origin reference,
+and `term x` correctly retained two separate source meanings rather than
+merging them. Its existing shortcut points to its interactive console.
+This verifies an already-installed **record-reader**, not connected
+inference, cryptographic authenticity, or an installed fleet.
+
+To open that existing OriginAI console:
+
+```powershell
+& 'C:\Users\Axel\OriginAI\origin-start.ps1' -Interactive
+```
+
+For repeatable read-only checks:
+
+```powershell
+& 'C:\Users\Axel\OriginAI\origin-start.ps1' -Action verify -AsJson
+& 'C:\Users\Axel\OriginAI\origin-start.ps1' -Action status -AsJson
+```
+
+The package reports `modelConnected: false`. The remaining ordered rollout
+needs the source-backed per-agent registration/configuration records and a
+local inference/runtime contract. The reviewed register preserves AXI's
+historical first-registered-origin statement, but its transcript export
+receipt is not the original utterance timestamp or an executable package.
+It does not establish a complete order for the later agents. Do not infer
+that order from generic role seeds, reserved names, document-copy times,
+or a historical profile-count summary.
+
+No OriginAI-to-AXES adapter, new agent installation, hosted-service request,
+or production cutover was performed by this verification. The existing
+record-reader and the AXES local command desk remain separate surfaces.
+
 ## Storage, backup, and configuration
 
 Default data directory: `%LOCALAPPDATA%\AXES\axiom-engine`; database: `axes.sqlite`; normalized avatars: `media\`. The app shows the actual database path after pairing. Data is outside the checkout and is not committed.
