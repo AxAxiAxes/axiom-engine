@@ -13,6 +13,14 @@ npm ci
 
 If using a portable Node, pass `-NodePath 'C:\tools\node.exe'`. The launcher does not install tools, change execution policy, require admin rights, or download models. You can also run `npm start`.
 
+To place a prototype launcher on Desktop (no system install), run:
+
+```powershell
+.\scripts\install-desktop-prototype.ps1 -NodePath 'C:\path\to\node.exe'
+```
+
+This creates `Start-AXES-Prototype.cmd` in `Desktop\AXES Prototype`, wired to this checkout and a desktop-local data folder.
+
 Open `http://127.0.0.1:3000/app/` and enter the random pairing code printed in the launch terminal. Use the numeric loopback address, not `localhost` or a LAN address. The code is private and valid only for that launch. Pairing another browser replaces the prior browser session; sessions expire after eight hours. Locking clears the browser session but does not cancel active work.
 
 Roles, history, and image avatars work without Ollama. To generate text, separately provision Ollama and at least one suitable **local** GGUF completion model before disconnecting; choose a model that fits the machine's RAM/VRAM. Observe the model's license. No model is bundled, downloaded, or claimed installed.
@@ -32,7 +40,7 @@ Missing runtime, incompatible metadata, missing models, insufficient memory, con
 | History | Stored locally, survives restart; explicit conversation deletion |
 | Avatars | Upload, replace, delete JPEG/PNG images or short H.264 MP4s; not model attachments |
 | Cloud / media generation | Unsupported; no extra image/video model or automatic download |
-| Autonomy / OS packaging | Deferred; no tools, scheduling, delegation, boot image, or desktop installer |
+| Autonomy / OS packaging | Deferred; no tools, scheduling, delegation, or boot image. Desktop launcher helper is included for local prototype startup |
 
 The templates are CEO, Secretary, Governance, Memory, Planner, Researcher, Analyst, Writer, Engineer, Reviewer, QA, Security, Operations, Archivist, Learning, and Support. These are suggestions, not a canonical issued-agent roster. Template count, enabled profiles, and active inference runs are displayed separately. "Memory" means saved conversations, not semantic retrieval or automatic access to other conversations. Governance/Security profiles are prompts, not enforcement mechanisms.
 
