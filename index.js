@@ -1,55 +1,58 @@
-// Express (and several of its dependencies, e.g. template engines) branch
-// on NODE_ENV: in anything other than "production" they skip view/route
-// caching and take slower, more verbose code paths meant for local
-// development. Deployments that forget to set NODE_ENV pay that cost on
-// every request for no benefit. Default it to "production" here -- before
-// express is required -- so a missing env var never silently degrades
-// throughput, while still letting an explicit override win.
-if (!process.env.NODE_ENV) {
-  process.env.NODE_ENV = "production";
+if (!process.env.NODE_ENV) process.env.NODE_ENV = "production";
+
+const { config } = require("./src/config");
+const { Store } = require("./src/store");
+const { Ollama } = require("./src/providers/ollama");
+const { Runs } = require("./src/runs");
+const { createApp } = require("./src/app");
+const { Media } = require("./src/media");
+
+async function main({ log = console.log } = {}) {
+  const [major, minor] = process.versions.node.split(".").map(Number);
+  if (major !== 24 || minor < 22) throw new Error("AXES requires Node 24.22.0 or newer in the Node 24 LTS line.");
+  const settings = config();
+  const store = new Store(settings.dataDir);
+  const provider = new Ollama(settings);
+  const runs = new Runs(store, provider, { onFatal: (code) => console.error(code) });
+  const media = new Media(settings.dataDir, store);
+  const { app, access } = createApp({ store, provider, runs, media });
+  let server;
+  try {
+    server = await new Promise((resolve, reject) => {
+      const listener = app.listen(settings.appPort, "127.0.0.1", () => resolve(listener));
+      listener.once("error", reject);
+    });
+  } catch (error) {
+    store.close();
+    throw error;
+  }
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
+  log(`AXES local workspace: http://127.0.0.1:${settings.appPort}/app/`);
+  log(`Pairing code (private, valid for this launch): ${access.pairingCode}`);
+  log("16 starter templates are profiles, not running agents. No cloud fallback.");
+  const starting = provider.start();
+  let closing = false;
+  async function shutdown() {
+    if (closing) return;
+    closing = true;
+    server.close();
+    server.closeAllConnections();
+    await provider.stop();
+    await starting;
+    await runs.stop();
+    await media.stop();
+    store.close();
+  }
+  process.once("SIGINT", () => { shutdown().catch(() => { console.error("SHUTDOWN_FAILED"); process.exitCode = 1; }); });
+  process.once("SIGTERM", () => { shutdown().catch(() => { console.error("SHUTDOWN_FAILED"); process.exitCode = 1; }); });
+  return { server, store, provider, runs, access, shutdown };
 }
 
-const express = require("express");
-const app = express();
-
-const jsonParser = express.json();
-
-// The health check body never changes, so serialize it once at startup
-// instead of re-running JSON.stringify/object allocation on every hit.
-// This route is typically polled frequently by load balancers/orchestrators,
-// making it a hot path worth avoiding repeated work on.
-const HEALTH_CHECK_BODY = JSON.stringify({ status: "AXIOM engine online" });
-
-// Health check
-app.get("/", (req, res) => {
-  res.type("application/json").send(HEALTH_CHECK_BODY);
-});
-
-// Core automation route
-app.post("/axiom", jsonParser, (req, res) => {
-  const { action, payload } = req.body;
-
-  res.json({
-    engine: "AXIOM",
-    actionReceived: action,
-    payloadReceived: payload,
-    status: "processed"
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(`AXES startup failed: ${error.message}`);
+    process.exitCode = 1;
   });
-});
-
-const server = app.listen(process.env.PORT || 3000, () => {
-  console.log("AXIOM engine running");
-});
-
-// Node's default keepAliveTimeout (5s) is shorter than the idle timeout of
-// most load balancers/proxies in front of this service (e.g. AWS ALB
-// defaults to 60s). That mismatch causes the LB to keep reusing a
-// connection Node has already torn down, forcing a fresh TCP/TLS handshake
-// on the next request instead of reusing the socket. Raising these above
-// typical upstream idle timeouts lets connections stay open and be reused,
-// cutting handshake overhead under sustained/repeated traffic (e.g.
-// frequent health-check polling). headersTimeout must stay greater than
-// keepAliveTimeout to avoid a known Node race that can drop pipelined
-// requests.
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
+}
+module.exports = { main };
