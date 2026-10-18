@@ -74,7 +74,7 @@ The existing `package.json` declares **ISC** (also present in the baseline); no 
 - Files remain on this device. The app does not send avatars to a model, CDN, or other service. You control replacement/deletion. Deletion removes the app's local record/file, not backups, browser caches outside its control, or forensic traces; it is not guaranteed secure erasure.
 - Observe each model, Ollama, FFmpeg build, `sharp`/libvips, and dependency license, including redistribution and codec obligations if you later package an OS. The repository's ISC declaration is not a license to third-party models or uploaded files. No legal/compliance certification is asserted.
 - SQLite, media, and backups are **plaintext** under your OS account. Use account permissions and OS disk encryption if needed. Do not store secrets you cannot protect on this computer.
-- One generation runs at a time. Timeout: **120 seconds**. JSON body: **64 KiB**. Message: **8,000 characters**. Serialized conversation input: **12,000 bytes**, additionally bounded by a conservative model-context budget. Context allocation is at most **16,384 tokens**; output at most **1,024 tokens**. Byte budgets are not exact token counts. Hardware/runtime limits can still reject a request.
+- One generation runs at a time. Timeout: **120 seconds**. JSON body: **64 KiB**. Message: **8,000 characters**. Serialized conversation input: **12,000 bytes**, additionally bounded by a conservative model-context budget. Context allocation is at most **4,096 tokens** for the 16 GB CPU deployment; output at most **1,024 tokens**. Byte budgets are not exact token counts. Hardware/runtime limits can still reject a request.
 - Completed conversation history is never intentionally trimmed to fit. Oversize conversations require a shorter input or new conversation. Failed/cancelled turns stay visible but are not replayed. No automatic retry; a failure never becomes a fake answer. On restart, unfinished runs are marked interrupted.
 - Pairing, Host/Origin checks, and CSRF protections restrict ordinary browser access. They are not a sandbox against malware or extensions running as your user. The separate Ollama listener has no AXES pairing authentication; trusted local processes are within the trust boundary.
 - **Offline-capable is not a machine-wide air gap.** Runtime installers/updaters and unrelated programs can still use the network. Provision Node, platform-specific dependencies, Ollama/model, and optional video tools beforehand. Strict air-gap operation requires disconnection or separately administered host controls. AXES does not change firewall rules or disable network adapters.
@@ -169,6 +169,105 @@ terminal. Data is kept separately at
 data is not moved or imported. Stop with Ctrl+C in that launch terminal.
 This is a local command desk installation, not a connected-agent installation.
 Missing models/runtime are reported explicitly.
+
+### Recovered source-agent configurations
+
+The original registry and implementation were subsequently recovered through
+read-only source access in `AxAxiAxes/keystone-eternal-seed`:
+`docs/AXES_AGENT_ORIGIN_REGISTRY.md`,
+`docs/AXI_GENESIS_OWNERSHIP_CHECKPOINT.md`, and
+`apps/axiom-engine/automation-service.js` (Git blob
+`a6534b2d9366e43f2f6c95177b4df98f46528bd1`).
+This supersedes the earlier supplied-files-only manifest gap: five implemented
+source identities exist: `memory-curator`, `project-memory-manager`,
+`automation-executor`, `automation-auditor`, and `operations-observer`.
+The 15-profile operating model remains a different record from those five.
+
+`scripts\stage-agents.cjs` accepts an explicitly supplied local
+`axes-source-agents-v1` manifest and the stopped app's absolute data directory.
+It stages exact IDs, names, purposes, duties, historical capability names,
+creator, established Origin, checkpoints, and source blob references without
+overwriting existing IDs or source metadata. Source profiles appear separately
+from templates and are disabled initially. Repeating an identical import
+preserves operator edits. An ID/source conflict fails the entire import.
+Historical capabilities are displayed as metadata, not executable permissions.
+This is source-configuration staging, not restoration of the original private
+runtime, registration history, memories, or tasks.
+
+The original `defaultAgents(now)` assigns a common newly evaluated timestamp
+to seeds; existing registration timestamps are retained in private state.
+Consequently neither its array order nor its Git commit date establishes the
+original registration sequence. Follow the established Origin and
+founder-directed OriginAI-first order, then use the retained registration
+state/export before ordered activation. Do not manufacture older dates,
+passport issuance, or an agent identity from a template.
+
+For a provisioned runtime and models, the installer accepts `-OllamaPath`
+and `-ModelDirectory` (absolute local paths). These are recorded only in that
+installation's start script; no global environment or cloud setting is changed.
+To run actual inference and restart acceptance, set `AXES_OLLAMA_EXE` and
+`OLLAMA_MODELS` in the current process, then run:
+
+```powershell
+.\node.exe .\scripts\verify-local.cjs --model qwen2.5:1.5b
+```
+
+Run from the installed application directory. This check uses isolated
+temporary data and unused loopback ports 3319/11436, performs an actual model
+response through the paired API, restarts the managed app/runtime, checks
+retained response/model digest, and removes only its temporary data.
+It fails rather than reporting a fake-provider success.
+
+### Verified local setup delivery - 2026-10-17
+
+The independent Windows installation is at
+`C:\Users\erick\AppData\Local\AXES\command-desk-v2`.
+Run its `Start-AXES.ps1` or `Start-AXES.cmd`, then open
+`http://127.0.0.1:3318/app/`. Pair with the private code in its launch terminal.
+The Desktop shortcut is `AXES Local Command Desk.lnk`; it targets that
+independent installation, not the older prototype worktree.
+The previous worktree preview and v1 copy are not the current installation.
+The original OriginAI reader remains at `C:\Users\Axel\OriginAI`; its 59-file
+manifest and commands were verified first and its files were not changed.
+
+Explicitly authorized standalone Ollama 0.40.6 is provisioned at
+`%LOCALAPPDATA%\AXES\tools\ollama-v0.40.6`; the official release archive was
+checked against SHA-256
+`e359637575302f288d76c0007c408a4be9c7376d59c4f28684d63b232a44b427`
+before extraction. Model `qwen2.5:1.5b` is stored under
+`%LOCALAPPDATA%\AXES\models`, size 986,061,892 bytes, inventory digest
+`65ec06548149b04c096a120e4a6da9d4017ea809c91734ea5631e89f96ddc57b`.
+The provided model license is retained as `MODEL-LICENSE.txt`.
+Ollama created its standard per-user `.ollama` key on first startup; no
+cloud login or cloud inference was used. Runtime logs explicitly confirmed
+cloud disabled. App/runtime listen only on 127.0.0.1:3318/11435.
+
+Actual acceptance (not injected providers): the installed paired API
+generated `AXES_LOCAL_READY`, saved the response, restarted app and managed
+runtime, and retained the response and model digest. That check took five
+seconds. A separate installed-app Edge workflow selected the actual model,
+generated and saved a response through the UI, and checked desktop/mobile
+layout. The installed 34-entry test suite also passed.
+
+Five recovered source configurations are staged, **disabled**, in SQLite.
+Their exact metadata is retained in installed `source-agents.json` and the
+`agent_sources` table, distinct from the 16 editable templates. No original
+registration timestamps, private memories, accountability histories, action
+permissions, or passports were manufactured. These are installed source-linked
+conversation configurations, not five activated automation agents. The source
+registry establishes their identities; the inspected records do not establish
+an individual timestamp order among them. Origin and OriginAI-first remain
+settled; retained original timeline evidence is required for the later
+ordered activation, not for their safe staging.
+
+Before schema/source staging, the stopped v1 database was preserved at
+`%LOCALAPPDATA%\AXES\local-command-desk-data\axes-before-source-staging.sqlite`.
+For rollback, stop v2, preserve the current database separately, and restore
+that snapshot only by an explicit operator decision before using v1.
+Do not run the old v1 binary against the schema-4 database. Existing Desktop
+prototype data, originals, public production, and hosted credentials were
+not changed. FFmpeg/ffprobe remain unprovisioned; uploaded images work, but
+real video conversion is still an explicit missing-tool state.
 
 ## Storage, backup, and configuration
 

@@ -50,7 +50,7 @@ The input-byte estimate includes a per-message reserve and output reserve; it is
 
 ## Persistence and recovery
 
-SQLite migrations use `user_version`: initial registry/conversations/runs/messages/settings, normalized-media metadata, then reserved identity-candidate field. Migration and seeding are transactional; edits are never overwritten by seed insertion. Newer schema/corruption/permission failures abort startup rather than replacing user data.
+SQLite migrations use `user_version`: initial registry/conversations/runs/messages/settings, normalized-media metadata, reserved identity-candidate field, then immutable source-agent metadata linked to exact local profile IDs. Migration and seeding are transactional; edits are never overwritten by seed insertion. Newer schema/corruption/permission failures abort startup rather than replacing user data.
 
 A per-data-directory PID/nonce lock prevents two instances from modifying live run recovery state. A dead-owner lock can be recovered; uncertain/live locks fail explicitly. This is a single-machine operational lock, not a distributed lock or anti-malware defense.
 

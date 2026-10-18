@@ -29,11 +29,12 @@ class Store {
       this.db = new DatabaseSync(this.path, { timeout: 2000 });
       this.db.exec("PRAGMA foreign_keys = ON;");
       const version = this.db.prepare("PRAGMA user_version").get().user_version;
-      if (version > 3) throw new Error("Database schema is newer than this app.");
+      if (version > 4) throw new Error("Database schema is newer than this app.");
       this.transaction(() => {
         if (version === 0) this.db.exec(readFileSync(path.join(__dirname, "migrations", "001-initial.sql"), "utf8"));
         if (version < 2) this.db.exec(readFileSync(path.join(__dirname, "migrations", "002-media.sql"), "utf8"));
         if (version < 3) this.db.exec(readFileSync(path.join(__dirname, "migrations", "003-identity.sql"), "utf8"));
+        if (version < 4) this.db.exec(readFileSync(path.join(__dirname, "migrations", "004-agent-sources.sql"), "utf8"));
         const seed = this.db.prepare("INSERT OR IGNORE INTO profiles (id,name,purpose,instructions,template) VALUES (?,?,?,?,1)");
         for (const role of templates) seed.run(role.id, role.name, role.purpose, role.instructions);
         this.db.prepare("UPDATE runs SET status='interrupted',error_code='INTERRUPTED',error_message=? WHERE status IN ('pending','running')")
@@ -59,8 +60,52 @@ class Store {
   }
 
   profiles() {
-    return this.db.prepare("SELECT p.*,m.mime AS media_mime,m.id AS media_id FROM profiles p LEFT JOIN profile_media m ON m.profile_id=p.id ORDER BY p.template DESC, p.name COLLATE NOCASE").all()
-      .map((p) => ({ ...p, enabled: !!p.enabled, template: !!p.template, passport_status: p.passport_candidate ? "reserved_unissued" : "unassigned" }));
+    return this.db.prepare("SELECT p.*,m.mime AS media_mime,m.id AS media_id,s.source_json FROM profiles p LEFT JOIN profile_media m ON m.profile_id=p.id LEFT JOIN agent_sources s ON s.profile_id=p.id ORDER BY p.template ASC, p.name COLLATE NOCASE").all()
+      .map(({ source_json, ...p }) => ({ ...p, enabled: !!p.enabled, template: !!p.template, sourceAgent: source_json ? JSON.parse(source_json) : null, passport_status: p.passport_candidate ? "reserved_unissued" : "unassigned" }));
+  }
+
+  stageAgents(document) {
+    fields(document, ["schema", "agents"], ["schema", "agents"]);
+    if (document.schema !== "axes-source-agents-v1" || !Array.isArray(document.agents) || !document.agents.length || document.agents.length > 50) {
+      throw new AppError("INVALID_INPUT", "Use a bounded axes-source-agents-v1 manifest.");
+    }
+    const ids = new Set();
+    const agents = document.agents.map((agent) => {
+      fields(agent, ["id", "name", "purpose", "duties", "capabilities", "originCheckpoint", "creator", "originRef", "source"], ["id", "name", "purpose", "duties", "capabilities", "originCheckpoint", "creator", "originRef", "source"]);
+      for (const field of ["id", "name", "purpose", "originCheckpoint", "creator", "originRef"]) text(agent[field], field, field === "purpose" ? 500 : 100);
+      if (!/^[a-z][a-z0-9-]{1,79}$/.test(agent.id) || agent.id.startsWith("template-") || ids.has(agent.id)) {
+        throw new AppError("INVALID_INPUT", "Source agent IDs must be unique and distinct from templates.");
+      }
+      ids.add(agent.id);
+      if (agent.originRef !== "KEYSTONE-ORIGIN-000001" || agent.creator !== "Axel Urartu (AX) · Axes Contracting") {
+        throw new AppError("INVALID_IDENTITY", "Preserve the established Origin and creator authority.");
+      }
+      for (const field of ["duties", "capabilities"]) {
+        if (!Array.isArray(agent[field]) || !agent[field].length || agent[field].length > 20) throw new AppError("INVALID_INPUT", `Supply bounded ${field}.`);
+        for (const entry of agent[field]) text(entry, field, 500);
+      }
+      fields(agent.source, ["repository", "path", "revision"], ["repository", "path", "revision"]);
+      text(agent.source.repository, "Source repository", 200);
+      text(agent.source.path, "Source path", 200);
+      if (!/^[a-f0-9]{40}$/.test(agent.source.revision)) throw new AppError("INVALID_INPUT", "Supply the retained source Git blob revision.");
+      return agent;
+    });
+    return this.transaction(() => {
+      for (const agent of agents) {
+        const existing = this.db.prepare("SELECT source_json FROM agent_sources WHERE profile_id=?").get(agent.id);
+        if (existing) {
+          if (existing.source_json !== JSON.stringify(agent)) throw new AppError("SOURCE_CONFLICT", "Existing source metadata differs; review rather than overwrite it.", 409);
+          continue;
+        }
+        if (this.db.prepare("SELECT id FROM profiles WHERE id=?").get(agent.id)) throw new AppError("SOURCE_CONFLICT", "An existing profile uses this ID; no identity was overwritten.", 409);
+        const instructions = `${agent.name}. ${agent.purpose}\nDuties: ${agent.duties.join(" ")}\nOrigin: ${agent.originRef}. Creator: ${agent.creator}.\nThis is a source-linked local conversation profile. Historical capabilities are metadata, not tool permissions. Do not claim to execute actions, access private memory, approve tasks, or possess autonomous authority.`;
+        text(instructions, "Instructions", 4000);
+        this.db.prepare("INSERT INTO profiles(id,name,purpose,instructions,enabled,template) VALUES (?,?,?,?,0,0)")
+          .run(agent.id, agent.name, agent.purpose, instructions);
+        this.db.prepare("INSERT INTO agent_sources VALUES (?,?)").run(agent.id, JSON.stringify(agent));
+      }
+      return agents.map((agent) => this.profile(agent.id));
+    });
   }
 
   profile(id) {

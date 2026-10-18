@@ -7,7 +7,7 @@ const { Runs } = require("./src/runs");
 const { createApp } = require("./src/app");
 const { Media } = require("./src/media");
 
-async function main() {
+async function main({ log = console.log } = {}) {
   const [major, minor] = process.versions.node.split(".").map(Number);
   if (major !== 24 || minor < 22) throw new Error("AXES requires Node 24.22.0 or newer in the Node 24 LTS line.");
   const settings = config();
@@ -28,9 +28,9 @@ async function main() {
   }
   server.keepAliveTimeout = 65000;
   server.headersTimeout = 66000;
-  console.log(`AXES local workspace: http://127.0.0.1:${settings.appPort}/app/`);
-  console.log(`Pairing code (private, valid for this launch): ${access.pairingCode}`);
-  console.log("16 starter templates are profiles, not running agents. No cloud fallback.");
+  log(`AXES local workspace: http://127.0.0.1:${settings.appPort}/app/`);
+  log(`Pairing code (private, valid for this launch): ${access.pairingCode}`);
+  log("16 starter templates are profiles, not running agents. No cloud fallback.");
   const starting = provider.start();
   let closing = false;
   async function shutdown() {
@@ -46,7 +46,7 @@ async function main() {
   }
   process.once("SIGINT", () => { shutdown().catch(() => { console.error("SHUTDOWN_FAILED"); process.exitCode = 1; }); });
   process.once("SIGTERM", () => { shutdown().catch(() => { console.error("SHUTDOWN_FAILED"); process.exitCode = 1; }); });
-  return { server, store, provider, runs, shutdown };
+  return { server, store, provider, runs, access, shutdown };
 }
 
 if (require.main === module) {

@@ -1,6 +1,8 @@
 param(
   [string]$NodePath = "node",
   [string]$DataDirectory,
+  [string]$OllamaPath,
+  [string]$ModelDirectory,
   [ValidateRange(1024, 65535)][int]$Port = 3000
 )
 
@@ -21,6 +23,18 @@ if (-not (Test-Path (Join-Path $root "node_modules\express")) -or -not (Test-Pat
 if ($DataDirectory) {
   if (-not [System.IO.Path]::IsPathRooted($DataDirectory)) { throw "DataDirectory must be absolute." }
   $env:AXES_DATA_DIR = $DataDirectory
+}
+if ($OllamaPath) {
+  if (-not [IO.Path]::IsPathRooted($OllamaPath) -or -not (Test-Path -LiteralPath $OllamaPath -PathType Leaf)) {
+    throw "OllamaPath must identify a provisioned absolute executable path."
+  }
+  $env:AXES_OLLAMA_EXE = $OllamaPath
+}
+if ($ModelDirectory) {
+  if (-not [IO.Path]::IsPathRooted($ModelDirectory) -or -not (Test-Path -LiteralPath $ModelDirectory -PathType Container)) {
+    throw "ModelDirectory must identify a provisioned absolute directory."
+  }
+  $env:OLLAMA_MODELS = $ModelDirectory
 }
 $env:PORT = "$Port"
 Write-Host "Starting AXES on loopback only. Open the printed /app/ address and pair with the launch code."

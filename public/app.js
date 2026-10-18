@@ -71,7 +71,7 @@ function renderRoles() {
     const copy = document.createElement("span");
     copy.append(document.createTextNode(p.name));
     const detail = document.createElement("small");
-    detail.textContent = `${p.template ? "Starter template" : "Custom profile"}${p.enabled ? "" : " / disabled"}`;
+    detail.textContent = `${p.sourceAgent ? "Source-linked profile" : p.template ? "Starter template" : "Custom profile"}${p.enabled ? "" : " / disabled"}`;
     copy.append(detail);
     button.append(initial, copy);
     button.addEventListener("click", action(() => selectProfile(p)));
@@ -100,7 +100,7 @@ function renderProfile() {
   $("conversation-title").textContent = p ? p.name : "Choose a role to begin";
   $("role-purpose").textContent = p ? p.purpose : "A focused conversation, powered locally.";
   $("profile-identity").textContent = p ?
-    `${p.template ? "Starter template" : "Custom profile"} / local ID: ${p.id} / ${p.passport_candidate ? `${p.passport_candidate}: reserved, unissued candidate` : "Passport unassigned"}. No verified deployed agent identity.` :
+    `${p.sourceAgent ? "Source-linked profile" : p.template ? "Starter template" : "Custom profile"} / local ID: ${p.id} / ${p.passport_candidate ? `${p.passport_candidate}: reserved, unissued candidate` : "Passport unassigned"}. ${p.sourceAgent ? `Origin: ${p.sourceAgent.originRef}. Creator: ${p.sourceAgent.creator}. Checkpoint: ${p.sourceAgent.originCheckpoint}. Source: ${p.sourceAgent.source.repository}, ${p.sourceAgent.source.path}, blob ${p.sourceAgent.source.revision}. Historical capabilities: ${p.sourceAgent.capabilities.join(", ")} (not executable tool permissions). Original registration history is not replaced by local staging.` : "No verified deployed agent identity."}` :
     "No profile selected. No agent identity is assigned automatically.";
   $("edit-role").disabled = !p;
   $("new-conversation").disabled = !p?.enabled;

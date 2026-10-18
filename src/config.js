@@ -5,7 +5,7 @@ const limits = Object.freeze({
   bodyBytes: 65536,
   inputBytes: 12000,
   outputTokens: 1024,
-  contextTokens: 16384,
+  contextTokens: 4096,
   runMs: 120000,
   providerBytes: 2 * 1024 * 1024,
   sessionMs: 8 * 60 * 60 * 1000

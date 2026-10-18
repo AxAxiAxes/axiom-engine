@@ -1,11 +1,18 @@
 param(
   [Parameter(Mandatory = $true)][string]$NodePath,
   [Parameter(Mandatory = $true)][string]$InstallDirectory,
+  [string]$OllamaPath,
+  [string]$ModelDirectory,
   [ValidateRange(1024, 65535)][int]$Port = 3318
 )
 
 $ErrorActionPreference = 'Stop'
 $source = Split-Path -Parent $PSScriptRoot
+foreach ($provided in @($OllamaPath, $ModelDirectory)) {
+  if ($provided -and (-not [IO.Path]::IsPathRooted($provided) -or -not (Test-Path -LiteralPath $provided))) {
+    throw 'Runtime/model paths must be provisioned absolute paths.'
+  }
+}
 if (-not [IO.Path]::IsPathRooted($InstallDirectory)) { throw 'InstallDirectory must be absolute.' }
 if (Test-Path -LiteralPath $InstallDirectory) { throw 'Use a new installation directory; existing installations and data are never overwritten.' }
 $node = (Get-Command $NodePath -ErrorAction Stop).Source
@@ -34,15 +41,21 @@ foreach ($document in @('architecture.md', 'ownership-policy.md')) {
   Copy-Item -LiteralPath (Join-Path $source "docs\$document") -Destination (Join-Path $install 'docs')
 }
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'start-local.ps1') -Destination (Join-Path $install 'scripts')
+foreach ($helper in @('stage-agents.cjs', 'verify-local.cjs')) {
+  Copy-Item -LiteralPath (Join-Path $PSScriptRoot $helper) -Destination (Join-Path $install 'scripts')
+}
 Copy-Item -LiteralPath $node -Destination (Join-Path $install 'node.exe')
 Copy-Item -LiteralPath $nodeLicense -Destination (Join-Path $install 'NODE-LICENSE.txt')
 $start = @'
 $ErrorActionPreference = 'Stop'
 $data = Join-Path $env:LOCALAPPDATA 'AXES\local-command-desk-data'
-& (Join-Path $PSScriptRoot 'scripts\start-local.ps1') -NodePath (Join-Path $PSScriptRoot 'node.exe') -DataDirectory $data -Port __PORT__
+& (Join-Path $PSScriptRoot 'scripts\start-local.ps1') -NodePath (Join-Path $PSScriptRoot 'node.exe') -DataDirectory $data -Port __PORT__ __RUNTIME__
 exit $LASTEXITCODE
 '@
-Set-Content -LiteralPath (Join-Path $install 'Start-AXES.ps1') -Value $start.Replace('__PORT__', "$Port") -Encoding UTF8
+$runtimeArguments = ''
+if ($OllamaPath) { $runtimeArguments += " -OllamaPath '" + $OllamaPath.Replace("'", "''") + "'" }
+if ($ModelDirectory) { $runtimeArguments += " -ModelDirectory '" + $ModelDirectory.Replace("'", "''") + "'" }
+Set-Content -LiteralPath (Join-Path $install 'Start-AXES.ps1') -Value $start.Replace('__PORT__', "$Port").Replace('__RUNTIME__', $runtimeArguments) -Encoding UTF8
 Set-Content -LiteralPath (Join-Path $install 'Start-AXES.cmd') -Encoding ASCII -Value @'
 @echo off
 powershell -NoLogo -NoProfile -File "%~dp0Start-AXES.ps1"

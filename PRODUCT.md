@@ -37,3 +37,27 @@ Keep local readiness and failure states honest. Distinguish templates, enablemen
 ## Accessibility
 
 Use semantic controls, visible keyboard focus, readable contrast, reduced-motion support, and a workbench that reflows on narrow screens. Media is decorative profile identity, not required information.
+
+## Supplied-design and local-setup update - 2026-10-17
+
+The founder's supplied visual board and dashboard now govern the interface:
+black/gold/burgundy Founder Desk, Project Overview, and Manager Agent
+composition. See DESIGN.md for exact source locators. This supersedes the
+earlier light-workbench palette, not the local-only behavior or factual limits.
+Illustrative artwork metrics are not telemetry.
+
+The authorized local setup now includes standalone Ollama and a small
+qwen2.5:1.5b model. Real installed-app inference, persisted reply, runtime/app
+restart, and Edge UI generation have passed. Provisioning was an explicit
+operator-authorized step; the application itself still never downloads models
+or falls back to cloud. Context is conservatively bounded to 4,096 tokens on
+the 16 GB CPU host.
+
+Five original source configurations were recovered upstream and staged with
+exact IDs, creator, Origin/checkpoints, duties, capabilities-as-metadata, and
+source blob evidence, separate from the sixteen generic templates. They start
+disabled. Staging does not mint a registration, timestamp, passport, original
+memory, accountability history, or tool permission. Established Origin and
+founder ownership are not reopened. OriginAI's existing reader is first;
+individual later rollout order needs retained timeline evidence rather than
+inference from source array order. README.md records paths and acceptance.

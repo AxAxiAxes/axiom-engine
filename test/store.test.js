@@ -68,7 +68,7 @@ test("earlier schema migrates transactionally and newer schema is not replaced",
     db.exec(require("node:fs").readFileSync(path.join(__dirname, "..", "src", "migrations", "001-initial.sql"), "utf8"));
     db.close();
     store = new Store(dir);
-    assert.equal(store.db.prepare("PRAGMA user_version").get().user_version, 3);
+    assert.equal(store.db.prepare("PRAGMA user_version").get().user_version, 4);
     assert.ok(store.profiles().every((p) => p.passport_status === "unassigned"));
     store.db.exec("PRAGMA user_version = 999;");
     store.close();

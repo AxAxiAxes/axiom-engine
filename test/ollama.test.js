@@ -91,7 +91,7 @@ test("model verification requires local inventory, GGUF, completion and context 
     return Response.json(url.endsWith("/api/tags") ? { models: [model, { ...model, name: "remote:cloud" }] } : details);
   } });
   provider.state.ready = true;
-  assert.equal((await provider.verify("local:test")).context, 8192);
+  assert.equal((await provider.verify("local:test")).context, 4096);
   await assert.rejects(provider.verify("remote:cloud"), { code: "LOCAL_MODEL_REQUIRED" });
   details = { ...details, model_info: {} };
   await assert.rejects(provider.verify("local:test"), { code: "MODEL_UNVERIFIED" });
